@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdOptimo - Smart Ad Management Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #f8fafc;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .roas-calculator {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+        
+        .demo-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .calculator-form {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-label {
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .calc-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: #f1f5f9;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .calc-input:focus {
+            outline: none;
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .calculate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .results-panel.show {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .optimization-insights {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .insight-title {
+            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .insight-list {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .live-dashboard {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+        }
+        
+        .dashboard-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ef4444;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .metric-change {
+            color: #22c55e;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .campaign-list {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .campaign-header {
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .auto-badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .campaign-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .campaign-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .campaign-info {
+            flex: 1;
+        }
+        
+        .campaign-name {
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .campaign-platform {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .campaign-metrics {
+            text-align: right;
+        }
+        
+        .campaign-roas {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .campaign-change {
+            color: #22c55e;
+            font-size: 0.8rem;
+        }
+        
+        .optimization-timeline {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ef4444;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-subtitle {
+            color: #94a3b8;
+        }
+        
+        .timeline-steps {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .timeline-step {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .step-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .step-title {
+            color: #f1f5f9;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-description {
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .step-results {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .step-results-title {
+            color: #22c55e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-results-list {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+        
+        .case-study {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .case-study-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .case-study-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .case-study-subtitle {
+            color: #94a3b8;
+        }
+        
+        .case-study-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        .case-study-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        .section-title {
+            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-text {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .results-highlight {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .highlight-title {
+            color: #22c55e;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .highlight-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .highlight-metric {
+            text-align: center;
+        }
+        
+        .highlight-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #22c55e;
+            display: block;
+        }
+        
+        .highlight-label {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border-radius: 24px;
+        }
+        
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
+        
+        .cta-description {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 1024px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .case-study-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-icon">🎯</div>
+                <div>
+                    <h1 class="title">AdOptimo</h1>
+                    <p class="subtitle">Smart Ad Management Demo - AI-Powered ROAS Optimization</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <!-- ROAS Calculator -->
+            <div class="roas-calculator">
+                <div class="demo-header">
+                    <div class="demo-icon">📊</div>
+                    <h2 class="demo-title">ROAS Optimizer</h2>
+                </div>
+                
+                <div class="calculator-form">
+                    <div class="input-group">
+                        <label class="input-label">Current Monthly Ad Spend ($)</label>
+                        <input type="number" class="calc-input" id="adSpend" placeholder="e.g., 5000">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Current Monthly Revenue from Ads ($)</label>
+                        <input type="number" class="calc-input" id="adRevenue" placeholder="e.g., 15000">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Target ROAS Goal</label>
+                        <input type="number" class="calc-input" id="targetROAS" placeholder="e.g., 5.0" step="0.1">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateOptimization()" id="calculateBtn">
+                        Calculate Optimization Potential
+                    </button>
+                </div>
+                
+                <div class="results-panel" id="resultsPanel">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-value" id="currentROAS">0x</div>
+                            <div class="result-label">Current ROAS</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="optimizedROAS">0x</div>
+                            <div class="result-label">Optimized ROAS</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="additionalRevenue">$0</div>
+                            <div class="result-label">Additional Monthly Revenue</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="costSavings">$0</div>
+                            <div class="result-label">Monthly Cost Savings</div>
+                        </div>
+                    </div>
+                    
+                    <div class="optimization-insights">
+                        <div class="insight-title">🎯 AI Optimization Strategy</div>
+                        <div class="insight-list" id="optimizationStrategy">
+                            Detailed optimization recommendations will appear here...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Dashboard -->
+            <div class="live-dashboard">
+                <div class="demo-header">
+                    <div class="demo-icon">📈</div>
+                    <h2 class="demo-title">Live Campaign Dashboard</h2>
+                </div>
+                
+                <div class="dashboard-metrics">
+                    <div class="metric-card">
+                        <span class="metric-value" id="totalSpend">$47,382</span>
+                        <div class="metric-label">Total Ad Spend (30 days)</div>
+                        <div class="metric-change">-23% vs last month</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="totalRevenue">$189,528</span>
+                        <div class="metric-label">Revenue Generated</div>
+                        <div class="metric-change">+67% vs last month</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="averageROAS">4.0x</span>
+                        <div class="metric-label">Average ROAS</div>
+                        <div class="metric-change">+115% improvement</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="optimizations">247</span>
+                        <div class="metric-label">AI Optimizations Made</div>
+                        <div class="metric-change">Last 24 hours</div>
+                    </div>
+                </div>
+                
+                <div class="campaign-list">
+                    <div class="campaign-header">
+                        <span>Active Campaigns</span>
+                        <span class="auto-badge">Auto-Optimizing</span>
+                    </div>
+                    
+                    <div class="campaign-item">
+                        <div class="campaign-info">
+                            <div class="campaign-name">Black Friday Sale - Facebook</div>
+                            <div class="campaign-platform">Meta Ads • Budget: $2,500</div>
+                        </div>
+                        <div class="campaign-metrics">
+                            <div class="campaign-roas">4.8x</div>
+                            <div class="campaign-change">+92% today</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campaign-item">
+                        <div class="campaign-info">
+                            <div class="campaign-name">Product Demo - Google Ads</div>
+                            <div class="campaign-platform">Google Ads • Budget: $1,800</div>
+                        </div>
+                        <div class="campaign-metrics">
+                            <div class="campaign-roas">3.7x</div>
+                            <div class="campaign-change">+45% today</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campaign-item">
+                        <div class="campaign-info">
+                            <div class="campaign-name">Retargeting - Instagram</div>
+                            <div class="campaign-platform">Meta Ads • Budget: $950</div>
+                        </div>
+                        <div class="campaign-metrics">
+                            <div class="campaign-roas">5.2x</div>
+                            <div class="campaign-change">+78% today</div>
+                        </div>
+                    </div>
+                    
+                    <div class="campaign-item">
+                        <div class="campaign-info">
+                            <div class="campaign-name">Local Service - Google</div>
+                            <div class="campaign-platform">Google Ads • Budget: $1,200</div>
+                        </div>
+                        <div class="campaign-metrics">
+                            <div class="campaign-roas">3.2x</div>
+                            <div class="campaign-change">+31% today</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optimization Timeline -->
+        <div class="optimization-timeline">
+            <div class="timeline-header">
+                <h2 class="timeline-title">24/7 AI Optimization Process</h2>
+                <p class="timeline-subtitle">How AdOptimo continuously improves your ad performance</p>
+            </div>
+            
+            <div class="timeline-steps">
+                <div class="timeline-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Real-Time Data Analysis</div>
+                        <div class="step-description">
+                            AI monitors every click, conversion, and interaction across all platforms. Advanced algorithms analyze performance patterns, audience behavior, and market conditions every 15 minutes.
+                        </div>
+                        <div class="step-results">
+                            <div class="step-results-title">Results:</div>
+                            <div class="step-results-list">
+                                • 98% faster issue detection<br>
+                                • Identifies optimization opportunities 24/7<br>
+                                • Processes 10M+ data points daily
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Intelligent Budget Allocation</div>
+                        <div class="step-description">
+                            AI automatically shifts budget from underperforming campaigns to high-converting ones. Smart bidding adjustments maximize ROAS while maintaining target cost-per-acquisition goals.
+                        </div>
+                        <div class="step-results">
+                            <div class="step-results-title">Results:</div>
+                            <div class="step-results-list">
+                                • 60% improvement in budget efficiency<br>
+                                • Automatic bid optimization every hour<br>
+                                • 40% reduction in wasted ad spend
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Creative Testing & Optimization</div>
+                        <div class="step-description">
+                            Automated A/B testing of ad creatives, headlines, and audiences. AI generates new ad variations based on top-performing elements and current market trends.
+                        </div>
+                        <div class="step-results">
+                            <div class="step-results-title">Results:</div>
+                            <div class="step-results-list">
+                                • 200% increase in creative testing speed<br>
+                                • 35% improvement in click-through rates<br>
+                                • Continuous creative optimization
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Performance Reporting & Insights</div>
+                        <div class="step-description">
+                            Daily automated reports with actionable insights and recommendations. AI identifies trends, forecasts performance, and suggests strategic adjustments for maximum ROI.
+                        </div>
+                        <div class="step-results">
+                            <div class="step-results-title">Results:</div>
+                            <div class="step-results-list">
+                                • 100% accuracy in reporting<br>
+                                • Predictive performance forecasting<br>
+                                • Strategic recommendations included
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case Study -->
+        <div class="case-study">
+            <div class="case-study-header">
+                <h2 class="case-study-title">Success Story: Glow Pet LED Collars</h2>
+                <p class="case-study-subtitle">From 1.5x to 4.0x ROAS in 8 weeks with AI optimization</p>
+            </div>
+            
+            <div class="case-study-content">
+                <div class="case-study-section">
+                    <div class="section-title">
+                        <span>⚠️</span>
+                        The Challenge
+                    </div>
+                    <div class="section-text">
+                        Glow Pet was spending $12K monthly on Facebook and Google ads with disappointing results. Their ROAS was stuck at 1.5x, meaning they barely broke even on ad spend. Manual optimization was consuming 10+ hours weekly with inconsistent results.
+                    </div>
+                    <div class="section-text">
+                        <strong>Key Problems:</strong><br>
+                        • Poor audience targeting<br>
+                        • Manual bid management<br>
+                        • No systematic creative testing<br>
+                        • Budget allocation based on guesswork
+                    </div>
+                </div>
+                
+                <div class="case-study-section">
+                    <div class="section-title">
+                        <span>🚀</span>
+                        The Solution
+                    </div>
+                    <div class="section-text">
+                        AdOptimo's AI took over complete campaign management, implementing 24/7 optimization based on real-time performance data. The system automatically adjusted budgets, tested new audiences, and optimized creative elements.
+                    </div>
+                    <div class="section-text">
+                        <strong>AI Implementation:</strong><br>
+                        • Automated audience discovery<br>
+                        • Smart budget redistribution<br>
+                        • Creative performance optimization<br>
+                        • Real-time bid adjustments
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-highlight">
+                <div class="highlight-title">📈 8-Week Results</div>
+                <div class="highlight-metrics">
+                    <div class="highlight-metric">
+                        <span class="highlight-value">4.0x</span>
+                        <div class="highlight-label">Final ROAS</div>
+                    </div>
+                    <div class="highlight-metric">
+                        <span class="highlight-value">$47K</span>
+                        <div class="highlight-label">Additional Monthly Revenue</div>
+                    </div>
+                    <div class="highlight-metric">
+                        <span class="highlight-value">60%</span>
+                        <div class="highlight-label">Cost Reduction</div>
+                    </div>
+                    <div class="highlight-metric">
+                        <span class="highlight-value">90%</span>
+                        <div class="highlight-label">Time Savings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2 class="cta-title">Ready to 4x Your Ad Performance?</h2>
+            <p class="cta-description">
+                Join successful businesses using AdOptimo to achieve 4.0x+ ROAS with AI-powered optimization. 
+                Reduce ad spend while increasing revenue with 24/7 automated campaign management.
+            </p>
+            <div class="cta-buttons">
+                <a href="mailto:demo@aicollab.com?subject=AdOptimo Implementation Request" class="btn-primary">
+                    <span>Start Optimizing Ads</span>
+                    <span>→</span>
+                </a>
+                <a href="#" class="btn-secondary">
+                    <span>Download ROAS Case Study</span>
+                    <span>📄</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateOptimization() {
+            const adSpend = parseFloat(document.getElementById('adSpend').value) || 0;
+            const adRevenue = parseFloat(document.getElementById('adRevenue').value) || 0;
+            const targetROAS = parseFloat(document.getElementById('targetROAS').value) || 4.0;
+            
+            if (adSpend === 0 || adRevenue === 0) {
+                alert('Please enter both ad spend and revenue to calculate optimization potential.');
+                return;
+            }
+            
+            const btn = document.getElementById('calculateBtn');
+            btn.disabled = true;
+            btn.textContent = 'Calculating...';
+            
+            setTimeout(() => {
+                const currentROAS = adRevenue / adSpend;
+                const optimizedROAS = Math.min(currentROAS * 2.5, Math.max(targetROAS, 4.0));
+                const additionalRevenue = adSpend * (optimizedROAS - currentROAS);
+                const costSavings = adSpend * 0.35; // 35% cost reduction through optimization
+                
+                // Update results
+                document.getElementById('currentROAS').textContent = currentROAS.toFixed(1) + 'x';
+                document.getElementById('optimizedROAS').textContent = optimizedROAS.toFixed(1) + 'x';
+                document.getElementById('additionalRevenue').textContent = ' + additionalRevenue.toLocaleString();
+                document.getElementById('costSavings').textContent = ' + costSavings.toLocaleString();
+                
+                // Generate optimization strategy
+                const strategy = generateOptimizationStrategy(currentROAS, optimizedROAS, adSpend);
+                document.getElementById('optimizationStrategy').innerHTML = strategy;
+                
+                document.getElementById('resultsPanel').classList.add('show');
+                
+                btn.disabled = false;
+                btn.textContent = 'Calculate Optimization Potential';
+            }, 2000);
+        }
+        
+        function generateOptimizationStrategy(current, optimized, spend) {
+            const improvement = ((optimized - current) / current * 100).toFixed(0);
+            
+            let strategy = `<strong>Expected ${improvement}% ROAS improvement through:</strong><br><br>`;
+            
+            if (current < 2.0) {
+                strategy += `
+                    • <strong>Audience Optimization:</strong> AI will identify and target high-converting customer segments<br>
+                    • <strong>Budget Reallocation:</strong> Shift spend from underperforming to profitable campaigns<br>
+                    • <strong>Bid Strategy Overhaul:</strong> Implement smart bidding for maximum efficiency<br>
+                    • <strong>Creative Testing:</strong> A/B test new ad variations to improve click-through rates<br><br>
+                    <em>Priority: Foundation optimization - expect 60-90 day improvement timeline</em>
+                `;
+            } else if (current < 3.0) {
+                strategy += `
+                    • <strong>Advanced Targeting:</strong> Implement lookalike audiences and behavioral targeting<br>
+                    • <strong>Dayparting Optimization:</strong> Adjust bids based on peak performance times<br>
+                    • <strong>Landing Page Optimization:</strong> Improve conversion rates through better user experience<br>
+                    • <strong>Cross-Platform Syncing:</strong> Coordinate campaigns across Facebook, Google, and other platforms<br><br>
+                    <em>Timeline: 30-45 days for significant improvement</em>
+                `;
+            } else {
+                strategy += `
+                    • <strong>Advanced Attribution:</strong> Multi-touch attribution modeling for better ROI tracking<br>
+                    • <strong>Predictive Scaling:</strong> AI-powered budget increases during high-performance periods<br>
+                    • <strong>Creative Automation:</strong> Dynamic ad generation based on top-performing elements<br>
+                    • <strong>Competitor Analysis:</strong> Real-time adjustments based on market conditions<br><br>
+                    <em>Timeline: 14-30 days for optimization fine-tuning</em>
+                `;
+            }
+            
+            return strategy;
+        }
+        
+        // Simulate live dashboard updates
+        function updateDashboard() {
+            const metrics = {
+                totalSpend: document.getElementById('totalSpend'),
+                totalRevenue: document.getElementById('totalRevenue'),
+                averageROAS: document.getElementById('averageROAS'),
+                optimizations: document.getElementById('optimizations')
+            };
+            
+            // Simulate small changes in metrics
+            const spendChange = Math.floor(Math.random() * 100) - 50;
+            const revenueChange = Math.floor(Math.random() * 500) + 200;
+            const optimizationChange = Math.floor(Math.random() * 10) + 1;
+            
+            const currentSpend = 47382 + spendChange;
+            const currentRevenue = 189528 + revenueChange;
+            const currentOptimizations = 247 + optimizationChange;
+            const currentROAS = (currentRevenue / currentSpend).toFixed(1);
+            
+            metrics.totalSpend.textContent = ' + currentSpend.toLocaleString();
+            metrics.totalRevenue.textContent = ' + currentRevenue.toLocaleString();
+            metrics.averageROAS.textContent = currentROAS + 'x';
+            metrics.optimizations.textContent = currentOptimizations;
+        }
+        
+        // Update dashboard every 5 seconds
+        setInterval(updateDashboard, 5000);
+        
+        // Add Enter key support
+        document.getElementById('adSpend').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateOptimization();
+        });
+        
+        document.getElementById('adRevenue').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') calculateOptimization();
+        });
+    </script>
+</body>
+</html>
